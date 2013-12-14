@@ -22,7 +22,8 @@ setRecordByIndex(index)
   sets current record on form to the index specified
 setRecordByField(fieldName,fieldValue)
   sets current record on form based on field name and field value specified (sets to first match)
-
+addRecord(index)
+  adds record at the index, if no index is specified it defaults to 0
 Additional Configs:
 syncRecordOnChange
   defaults to false
