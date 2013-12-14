@@ -1,19 +1,6 @@
 ﻿Ext.define('App.view.StoreForm', {
     extend: 'Ext.form.Panel',
     constructor: function (config) {
-        //        console.log('Constructor Fired');
-        //if (this.syncRecordOnChange) {
-        //    //If sync on change is true then add listener to change events to set values
-        //    console.log('sync record on change requested');
-        //    console.log(this.items.items);
-        //    Ext.each(this.items.items, function (field) {
-        //        console.log(field);
-        //        field.on('change', function () {
-        //            console.log('Change Fired.');
-        //            this.getRecord().set(field.name, field.getValue());
-        //        });
-        //    });
-        //}
         var me = this;
         me.getStore().on('load', function () {
             if (me.getStore().data.items[0] != null) {
@@ -144,5 +131,11 @@
             this.getStore().remove(this.getRecord());
             this.reset();
         }
+    },
+    addRecord: function (index) {
+        if (index == null)
+            index = 0;
+        this.getStore().insert(index, {});
+        this.setRecordByIndex(index);
     }
 });
