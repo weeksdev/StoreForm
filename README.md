@@ -1,6 +1,8 @@
 # StoreForm
+<h3> Bind store and form with record iteration and editing </h3>
 > extends: 'Ext.form.Panel' <br>
 > This js file is to be used within an ExtJS 4 application.  
+
 
 #Instructions
 
