@@ -35,6 +35,20 @@
                     });
                 });
             }
+            if (this.gridSelector != null) {
+                var grid = Ext.ComponentQuery.query(this.gridSelector)[0];
+                //console.log(grid)
+                grid.on('selectionchange', function () {
+                    //console.log('got here');
+                    var selectedGridRecord = grid.getSelectionModel().getSelection()[0];
+                    if (selectedGridRecord != null) {
+                        me.setRecordByIndex(me.getStore().indexOf(selectedGridRecord));
+                    }
+                });
+                this.on('recordchange',function(me,store,record){
+                    grid.getSelectionModel().select([record]);
+                })
+            }
         }
     },
     hasId: false,
@@ -44,12 +58,18 @@
     endOfStore: false,
     startOfStore:true,
     store: null,
+    gridSelector:null,
     selectedIndex: 0,
     syncRecordOnChange: false,
     reset: function () {
         this.selectedIndex = null;
         this.getForm().reset();
         this.selectedIndex = -1;
+
+        this.fireEvent('reset', this, this.getStore(), this.getRecord());
+    },
+    setRecord:function(){
+        this.loadRecord(this.getRecord());
     },
     setRecordByIndex: function (index) {
         var itemCount = this.getStore().count() - 1;
@@ -80,10 +100,21 @@
             this.getForm().reset();
             this.selectedIndex = index;
             this.loadRecord(this.getStore().data.items[index]);
+            this.fireEvent('recordchange', this, this.getStore(), this.getRecord());
         }
     },
     setRecordByField: function (fieldname, fieldvalue) {
         this.loadRecord(this.getStore().findRecord(fieldname, fieldvalue));
+        this.selectedIndex = this.getStore().indexOf(this.getRecord());
+        this.fireEvent('recordchange', this, this.getStore(), this.getRecord());
+    },
+    cancelRecordChanges:function(index){
+        record = this.getRecord();
+        if(index)
+            record = this.getStore().data.items[index]
+
+        record.reject();
+        this.setRecord();
     },
     getRecord: function () {
         //console.log('getRecord Fired');
@@ -99,9 +130,10 @@
         }
         var storeRecord = this.getStore().data.items[index];
         Ext.each(this.items.items, function (field) {
-            console.log(field);
+            //console.log(field);
             storeRecord.set(field.name, field.getValue());
         });
+        this.fireEvent('recordsync', this, this.getStore(), this.getRecord());
     },
     getFirstRecord: function () {
         if (this.getStore().count() > 0) {
